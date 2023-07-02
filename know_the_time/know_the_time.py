@@ -275,6 +275,8 @@ def get_time_string_24h_with_0s(point_of_time: float) -> str:
 def get_time_stamp(
     point_of_time: float,
     zeros: bool = True,
+    seperator: str = "-",
+    date_time_seperator: str = " - ",
 ) -> str:
     """
     Get a time stamp formated like: 'year-month-day - hour-minute-second-millisecond' for example '2023-06-18 - 17-52-42-446'
@@ -304,12 +306,14 @@ def get_time_stamp(
             str_second = "0" + str_second
         while len(str_millisecond) < 3:
             str_millisecond = "0" + str_millisecond
-    return f"{get_year(point_of_time)}-{str_month}-{str_months_day} - {str_hour}-{str_minute}-{str_second}-{str_millisecond}"
+    return str(get_year(point_of_time)) + seperator + str_month + seperator + str_months_day + date_time_seperator + str_hour + seperator + str_minute + seperator + str_second + seperator + str_millisecond
 
 
 def get_time_stamp_s(
     point_of_time: float,
     zeros: bool = True,
+    seperator: str = "-",
+    date_time_seperator: str = " - ",
 ) -> str:
     """
     Get a time stamp formated like: 'year-month-day - hour-minute-second' for example '2023-06-18 - 17-52-42'
@@ -336,12 +340,13 @@ def get_time_stamp_s(
             str_minute = "0" + str_minute
         while len(str_second) < 2:
             str_second = "0" + str_second
-    return f"{get_year(point_of_time)}-{str_month}-{str_months_day} - {str_hour}-{str_minute}-{str_second}"
+    return str(get_year(point_of_time)) + seperator + str_month + seperator + str_months_day + date_time_seperator + str_hour + seperator + str_minute + seperator + str_second
 
 
 def get_time_stamp_date(
     point_of_time: float,
     zeros: bool = True,
+    seperator: str = "-",
 ) -> str:
     """
     Get a time stamp formated like: 'year-month-day' for example '2023-06-18'
@@ -368,7 +373,7 @@ def get_time_stamp_date(
             str_minute = "0" + str_minute
         while len(str_second) < 2:
             str_second = "0" + str_second
-    return f"{get_year(point_of_time)}-{str_month}-{str_months_day}"
+    return str(get_year(point_of_time)) + seperator + str_month + seperator + str_months_day
 
 
 def date_to_total_seconds(day, month, year, hour, minute, second):
