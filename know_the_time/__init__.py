@@ -1,6 +1,6 @@
 from .know_the_time import (
-    time_delta_prettystring,
-    time_delta_prettystring2,
+    get_time_delta_prettystring,
+    get_time_delta_prettystring2,
     get_year,
     get_month,
     get_month_3_characters_eng,
