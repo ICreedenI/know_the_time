@@ -3,7 +3,7 @@ from math import floor
 from time import time, localtime
 
 
-def time_delta_prettystring(
+def get_time_delta_prettystring(
     start: float,
     end: float = None,
     start_is_delta: bool = False,
@@ -55,7 +55,7 @@ def time_delta_prettystring(
         return f"{hours}:{minutes}:{seconds}:{milliseconds}"
 
 
-def time_delta_prettystring2(
+def get_time_delta_prettystring2(
     start: float,
     end: float = None,
     start_is_delta: bool = False,
