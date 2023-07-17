@@ -273,7 +273,7 @@ def get_time_string_24h_with_0s(point_of_time: float) -> str:
 
 
 def get_time_stamp(
-    point_of_time: float,
+    point_of_time: float = None,
     zeros: bool = True,
     seperator: str = "-",
     date_time_seperator: str = " - ",
@@ -283,6 +283,8 @@ def get_time_stamp(
 
     0 before the number (e.g. june -> 06) can be trashed by setting zeros to `False`
     """
+    if point_of_time == None:
+        point_of_time = time()
     str_months_day, str_month = str(get_months_day(point_of_time)), str(
         get_month(point_of_time)
     )
@@ -310,7 +312,7 @@ def get_time_stamp(
 
 
 def get_time_stamp_s(
-    point_of_time: float,
+    point_of_time: float = None,
     zeros: bool = True,
     seperator: str = "-",
     date_time_seperator: str = " - ",
@@ -320,6 +322,8 @@ def get_time_stamp_s(
 
     0 before the number (e.g. june -> 06) can be trashed by setting zeros to `False`
     """
+    if point_of_time == None:
+        point_of_time = time()
     str_months_day, str_month = str(get_months_day(point_of_time)), str(
         get_month(point_of_time)
     )
@@ -344,7 +348,7 @@ def get_time_stamp_s(
 
 
 def get_time_stamp_date(
-    point_of_time: float,
+    point_of_time: float = None,
     zeros: bool = True,
     seperator: str = "-",
 ) -> str:
@@ -353,6 +357,8 @@ def get_time_stamp_date(
 
     0 before the number (e.g. june -> 06) can be trashed by setting zeros to `False`
     """
+    if point_of_time == None:
+        point_of_time = time()
     str_months_day, str_month = str(get_months_day(point_of_time)), str(
         get_month(point_of_time)
     )
