@@ -29,4 +29,4 @@ from .know_the_time import (
 )
 
 
-__version__ = "0.0.8"
+__version__ = "0.0.2"
