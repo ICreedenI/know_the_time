@@ -22,11 +22,13 @@ from .know_the_time import (
     get_time_string_24h_without_0s,
     get_time_string_24h_with_0s,
     get_time_stamp,
+    get_time_stamp2,
     get_time_stamp_s,
+    get_time_stamp_s2,
     get_time_stamp_date,
     date_to_total_seconds,
     total_seconds_to_date,
 )
 
 
-__version__ = "0.0.2"
+__version__ = "0.0.3"

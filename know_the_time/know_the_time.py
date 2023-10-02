@@ -8,6 +8,8 @@ def get_time_delta_prettystring(
     end: float = None,
     start_is_delta: bool = False,
     include_milliseconds: bool = False,
+    add_days_to_hours: bool = False,
+    include_days: bool = True,
 ):
     """Get the time difference in the form of hours:minutes:seconds{:milliseconds}
 
@@ -16,6 +18,8 @@ def get_time_delta_prettystring(
         end (float, optional): second point in time. Defaults to None meaning now if not start_is_delta.
         start_is_delta (bool, optional): set True if you input the difference. Defaults to False.
         include_milliseconds (bool, optional): adds ":milliseconds". Defaults to False.
+        include_days (bool, optional): adds days. Defaults to True.
+        add_days_to_hours (bool, optional): enlarges hours to inlude the days. Defaults to False.
 
     Returns:
         str: time difference in the form of hours:minutes:seconds{:milliseconds}
@@ -34,7 +38,9 @@ def get_time_delta_prettystring(
     seconds = floor(delta // s % sr)
     minutes = floor(delta // m % mr)
     hours = floor(delta // h % hr)
-    days = floor(delta // d % dr)
+    days = floor(delta // d)
+    if add_days_to_hours:
+        hours += 24 * days
 
     milliseconds = str(milliseconds)
     while len(milliseconds) < 3:
@@ -48,11 +54,14 @@ def get_time_delta_prettystring(
     hours = str(hours)
     if len(hours) < 2:
         hours = "0" + hours
+    days = str(days) + ":"
+    if days == "0:" or not include_days:
+        days = ""
 
     if not include_milliseconds:
-        return f"{hours}:{minutes}:{seconds}"
+        return f"{days}{hours}:{minutes}:{seconds}"
     else:
-        return f"{hours}:{minutes}:{seconds}:{milliseconds}"
+        return f"{days}{hours}:{minutes}:{seconds}:{milliseconds}"
 
 
 def get_time_delta_prettystring2(
@@ -62,6 +71,8 @@ def get_time_delta_prettystring2(
     include_milliseconds: bool = False,
     zeros: bool = True,
     long_units: bool = False,
+    add_days_to_hours: bool = False,
+    include_days: bool = True,
 ):
     """Get the time difference in the form of [hours] h [minutes] min [seconds] s {[milliseconds] ms}
 
@@ -72,6 +83,8 @@ def get_time_delta_prettystring2(
         include_milliseconds (bool, optional): adds ":milliseconds". Defaults to False.
         zeros (bool, optional): adds 0 to keep a standard length. Defaults to True.
         long_units (bool, optional): use hours, minutes, seconds, milliseconds instead of h, min, s, ms. Defaults to True.
+        include_days (bool, optional): adds days. Defaults to True.
+        add_days_to_hours (bool, optional): enlarges hours to inlude the days. Defaults to False.
 
     Returns:
         str: time difference in the form of [hours] h [minutes] min [seconds] s {[milliseconds] ms}
@@ -90,7 +103,9 @@ def get_time_delta_prettystring2(
     seconds = floor(delta // s % sr)
     minutes = floor(delta // m % mr)
     hours = floor(delta // h % hr)
-    days = floor(delta // d % dr)
+    days = floor(delta // d)
+    if add_days_to_hours:
+        hours += 24 * days
 
     if zeros:
         milliseconds = str(milliseconds)
@@ -105,16 +120,24 @@ def get_time_delta_prettystring2(
         hours = str(hours)
         if len(hours) < 2:
             hours = "0" + hours
+        days = str(days)
+        if days == "0":
+            days = ""
 
     if long_units:
-        h, min, s, ms = "hours", "minutes", "seconds", "milliseconds"
+        d, h, min, s, ms = "days", "hours", "minutes", "seconds", "milliseconds"
     else:
-        h, min, s, ms = "h", "min", "s", "ms"
+        d, h, min, s, ms = "d", "h", "min", "s", "ms"
+
+    if not include_days or days == "":
+        days = ""
+    else:
+        days = days + " " + d + " "
 
     if not include_milliseconds:
-        return f"{hours} {h} {minutes} {min} {seconds} {s}"
+        return f"{days}{hours} {h} {minutes} {min} {seconds} {s}"
     else:
-        return f"{hours} {h} {minutes} {min} {seconds} {s} {milliseconds} {ms}"
+        return f"{days}{hours} {h} {minutes} {min} {seconds} {s} {milliseconds} {ms}"
 
 
 def get_year(point_of_time: float) -> int:
@@ -275,7 +298,8 @@ def get_time_string_24h_with_0s(point_of_time: float) -> str:
 def get_time_stamp(
     point_of_time: float = None,
     zeros: bool = True,
-    seperator: str = "-",
+    time_seperator: str = "-",
+    date_seperator: str = "-",
     date_time_seperator: str = " - ",
 ) -> str:
     """
@@ -308,13 +332,82 @@ def get_time_stamp(
             str_second = "0" + str_second
         while len(str_millisecond) < 3:
             str_millisecond = "0" + str_millisecond
-    return str(get_year(point_of_time)) + seperator + str_month + seperator + str_months_day + date_time_seperator + str_hour + seperator + str_minute + seperator + str_second + seperator + str_millisecond
+    return (
+        str(get_year(point_of_time))
+        + date_seperator
+        + str_month
+        + date_seperator
+        + str_months_day
+        + date_time_seperator
+        + str_hour
+        + time_seperator
+        + str_minute
+        + time_seperator
+        + str_second
+        + time_seperator
+        + str_millisecond
+    )
+
+
+def get_time_stamp2(
+    point_of_time: float = None,
+    zeros: bool = True,
+    time_seperator: str = "-",
+    date_seperator: str = "-",
+    date_time_seperator: str = " - ",
+) -> str:
+    """
+    Get a time stamp formated like: 'hour-minute-second-millisecond - year-month-day' for example '17-52-42-446 - 2023-06-18'
+
+    0 before the number (e.g. june -> 06) can be trashed by setting zeros to `False`
+    """
+    if point_of_time == None:
+        point_of_time = time()
+    str_months_day, str_month = str(get_months_day(point_of_time)), str(
+        get_month(point_of_time)
+    )
+    if zeros:
+        while len(str_months_day) < 2:
+            str_months_day = "0" + str_months_day
+        while len(str_month) < 2:
+            str_month = "0" + str_month
+    str_hour, str_minute, str_second, str_millisecond = (
+        str(get_hour(point_of_time)),
+        str(get_minute(point_of_time)),
+        str(get_second(point_of_time)),
+        str(get_millisecond(point_of_time)),
+    )
+    if zeros:
+        while len(str_hour) < 2:
+            str_hour = "0" + str_hour
+        while len(str_minute) < 2:
+            str_minute = "0" + str_minute
+        while len(str_second) < 2:
+            str_second = "0" + str_second
+        while len(str_millisecond) < 3:
+            str_millisecond = "0" + str_millisecond
+    return (
+        str_hour
+        + time_seperator
+        + str_minute
+        + time_seperator
+        + str_second
+        + time_seperator
+        + str_millisecond
+        + date_time_seperator
+        + str_months_day
+        + +date_seperator
+        + str_month
+        + date_seperator
+        + str(get_year(point_of_time))
+    )
 
 
 def get_time_stamp_s(
     point_of_time: float = None,
     zeros: bool = True,
-    seperator: str = "-",
+    time_seperator: str = "-",
+    date_seperator: str = "-",
     date_time_seperator: str = " - ",
 ) -> str:
     """
@@ -344,7 +437,68 @@ def get_time_stamp_s(
             str_minute = "0" + str_minute
         while len(str_second) < 2:
             str_second = "0" + str_second
-    return str(get_year(point_of_time)) + seperator + str_month + seperator + str_months_day + date_time_seperator + str_hour + seperator + str_minute + seperator + str_second
+    return (
+        str(get_year(point_of_time))
+        + date_seperator
+        + str_month
+        + date_seperator
+        + str_months_day
+        + date_time_seperator
+        + str_hour
+        + time_seperator
+        + str_minute
+        + time_seperator
+        + str_second
+    )
+
+
+def get_time_stamp_s2(
+    point_of_time: float = None,
+    zeros: bool = True,
+    time_seperator: str = "-",
+    date_seperator: str = "-",
+    date_time_seperator: str = " - ",
+) -> str:
+    """
+    Get a time stamp formated like: 'hour-minute-second - year-month-day' for example '17-52-42 - 2023-06-18'
+
+    0 before the number (e.g. june -> 06) can be trashed by setting zeros to `False`
+    """
+    if point_of_time == None:
+        point_of_time = time()
+    str_months_day, str_month = str(get_months_day(point_of_time)), str(
+        get_month(point_of_time)
+    )
+    if zeros:
+        while len(str_months_day) < 2:
+            str_months_day = "0" + str_months_day
+        while len(str_month) < 2:
+            str_month = "0" + str_month
+    str_hour, str_minute, str_second = (
+        str(get_hour(point_of_time)),
+        str(get_minute(point_of_time)),
+        str(get_second(point_of_time)),
+    )
+    if zeros:
+        while len(str_hour) < 2:
+            str_hour = "0" + str_hour
+        while len(str_minute) < 2:
+            str_minute = "0" + str_minute
+        while len(str_second) < 2:
+            str_second = "0" + str_second
+    return (
+        str_hour
+        + time_seperator
+        + str_minute
+        + time_seperator
+        + str_second
+        + date_time_seperator
+        + str_months_day
+        + date_seperator
+        + str_month
+        + date_seperator
+        + str(get_year(point_of_time))
+    )
 
 
 def get_time_stamp_date(
@@ -379,7 +533,13 @@ def get_time_stamp_date(
             str_minute = "0" + str_minute
         while len(str_second) < 2:
             str_second = "0" + str_second
-    return str(get_year(point_of_time)) + seperator + str_month + seperator + str_months_day
+    return (
+        str(get_year(point_of_time))
+        + seperator
+        + str_month
+        + seperator
+        + str_months_day
+    )
 
 
 def date_to_total_seconds(day, month, year, hour, minute, second):
