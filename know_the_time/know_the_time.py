@@ -301,6 +301,7 @@ def get_time_stamp(
     time_seperator: str = "-",
     date_seperator: str = "-",
     date_time_seperator: str = " - ",
+    milliseconds: bool = True,
 ) -> str:
     """
     Get a time stamp formated like: 'year-month-day - hour-minute-second-millisecond' for example '2023-06-18 - 17-52-42-446'
@@ -332,21 +333,36 @@ def get_time_stamp(
             str_second = "0" + str_second
         while len(str_millisecond) < 3:
             str_millisecond = "0" + str_millisecond
-    return (
-        str(get_year(point_of_time))
-        + date_seperator
-        + str_month
-        + date_seperator
-        + str_months_day
-        + date_time_seperator
-        + str_hour
-        + time_seperator
-        + str_minute
-        + time_seperator
-        + str_second
-        + time_seperator
-        + str_millisecond
-    )
+    if milliseconds:
+        return (
+            str(get_year(point_of_time))
+            + date_seperator
+            + str_month
+            + date_seperator
+            + str_months_day
+            + date_time_seperator
+            + str_hour
+            + time_seperator
+            + str_minute
+            + time_seperator
+            + str_second
+            + time_seperator
+            + str_millisecond
+        )
+    else:
+        return (
+            str(get_year(point_of_time))
+            + date_seperator
+            + str_month
+            + date_seperator
+            + str_months_day
+            + date_time_seperator
+            + str_hour
+            + time_seperator
+            + str_minute
+            + time_seperator
+            + str_second
+        )
 
 
 def get_time_stamp2(
