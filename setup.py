@@ -14,7 +14,7 @@ DESCRIPTION = (
 # Setting up
 setup(
     name="know_the_time",
-    version="0.0.4",
+    version="0.0.5",
     author="André Herber",
     author_email="andre.herber.programming@gmail.com",
     # url="https://github.com/ICreedenI/know_the_time",
@@ -22,8 +22,7 @@ setup(
     long_description_content_type="text/markdown",
     long_description=long_description,
     packages=find_packages(),
-    install_requires=[
-    ],
+    install_requires=[],
     keywords=["python"],
     classifiers=[
         "Development Status :: 1 - Planning",

@@ -373,7 +373,7 @@ def get_time_stamp2(
     date_time_seperator: str = " - ",
 ) -> str:
     """
-    Get a time stamp formated like: 'hour-minute-second-millisecond - year-month-day' for example '17-52-42-446 - 2023-06-18'
+    Get a time stamp formated like: 'hour-minute-second-millisecond - year-month-day' for example '17-52-42-446 - 18-06-2023'
 
     0 before the number (e.g. june -> 06) can be trashed by setting zeros to `False`
     """
@@ -412,11 +412,12 @@ def get_time_stamp2(
         + str_millisecond
         + date_time_seperator
         + str_months_day
-        + +date_seperator
+        + date_seperator
         + str_month
         + date_seperator
         + str(get_year(point_of_time))
     )
+
 
 
 def get_time_stamp_s(
@@ -476,7 +477,7 @@ def get_time_stamp_s2(
     date_time_seperator: str = " - ",
 ) -> str:
     """
-    Get a time stamp formated like: 'hour-minute-second - year-month-day' for example '17-52-42 - 2023-06-18'
+    Get a time stamp formated like: 'hour-minute-second - year-month-day' for example '17-52-42 - 18-06-2023'
 
     0 before the number (e.g. june -> 06) can be trashed by setting zeros to `False`
     """
