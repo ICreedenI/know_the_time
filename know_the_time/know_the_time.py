@@ -1,6 +1,112 @@
-import datetime
+from datetime import datetime
 from math import floor
 from time import time, localtime
+
+
+# Accepted time/date formats (all functions rely on this list)
+TIME_FORMATS = [
+    "%H:%M",
+    "%H:%M:%S",
+    "%H:%M:%S:%f",
+    "%H:%M, %d.%m.",
+    "%H:%M, %d.%m.%y",
+    "%H:%M, %d.%m.%Y",
+    "%H:%M:%S, %d.%m.",
+    "%H:%M:%S, %d.%m.%y",
+    "%H:%M:%S, %d.%m.%Y",
+    "%H:%M:%S:%f, %d.%m.",
+    "%H:%M:%S:%f, %d.%m.%y",
+    "%H:%M:%S:%f, %d.%m.%Y"
+]
+
+
+def get_time_from_string(t_str):
+    """
+    Parse a flexible time/date string into a datetime object.
+
+    Missing date values default to today's date.
+    Missing year values default to the current year.
+    See TIME_FORMATS for supported formats.
+
+    Parameters
+    ----------
+    t_str : str
+        The time/date string to parse.
+
+    Returns
+    -------
+    datetime
+        The parsed datetime object.
+
+    Raises
+    ------
+    ValueError
+        If the input string doesn't match any supported format.
+    """
+    t_str = t_str.strip()
+    for fmt in TIME_FORMATS:
+        try:
+            dt = datetime.strptime(t_str, fmt)
+            if "%Y" not in fmt and "%y" not in fmt:
+                dt = dt.replace(year=datetime.now().year)
+            if "%d" not in fmt:
+                now = datetime.now()
+                dt = dt.replace(year=now.year, month=now.month, day=now.day)
+            return dt
+        except ValueError:
+            continue
+    raise ValueError(f"Time format not recognized: {t_str}")
+
+
+def get_string_from_time(dt, include_ms=False, include_date=True):
+    """
+    Format a datetime object into a string.
+
+    Parameters
+    ----------
+    dt : datetime
+        The datetime object to format.
+    include_ms : bool, optional
+        Whether to include milliseconds (default: False).
+    include_date : bool, optional
+        Whether to include the date in 'DD.MM.YYYY' format (default: True).
+
+    Returns
+    -------
+    str
+        The formatted time/date string.
+    """
+    if include_date:
+        return dt.strftime("%H:%M:%S:%f, %d.%m.%Y" if include_ms else "%H:%M:%S, %d.%m.%Y")
+    else:
+        return dt.strftime("%H:%M:%S:%f" if include_ms else "%H:%M:%S")
+
+
+def time_diff_seconds(time1_str, time2_str=None):
+    """
+    Calculate the difference in seconds between two time points.
+
+    Parameters
+    ----------
+    time1_str : str
+        The first time/date string (see TIME_FORMATS for supported formats).
+    time2_str : str, optional
+        The second time/date string. If omitted, the current time is used.
+
+    Returns
+    -------
+    float
+        The time difference in seconds. Positive if time2 is after time1,
+        negative if time2 is before time1.
+
+    Raises
+    ------
+    ValueError
+        If either input string doesn't match any supported format.
+    """
+    dt1 = get_time_from_string(time1_str)
+    dt2 = get_time_from_string(time2_str) if time2_str else datetime.now()
+    return (dt2 - dt1).total_seconds()
 
 
 def get_time_delta_prettystring(
@@ -560,15 +666,15 @@ def get_time_stamp_date(
 
 
 def date_to_total_seconds(day, month, year, hour, minute, second):
-    dt = datetime.datetime(year, month, day, hour, minute, second)
+    dt = datetime(year, month, day, hour, minute, second)
     return dt.timestamp()
 
 
 def total_seconds_to_date(s, microseconds=False):
     if not microseconds:
-        return str(datetime.datetime.fromtimestamp(round(s)))
+        return str(datetime.fromtimestamp(round(s)))
     else:
-        return str(datetime.datetime.fromtimestamp(s))
+        return str(datetime.fromtimestamp(s))
 
 
 if __name__ == "__main__":

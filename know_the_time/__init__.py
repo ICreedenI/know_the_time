@@ -28,7 +28,10 @@ from .know_the_time import (
     get_time_stamp_date,
     date_to_total_seconds,
     total_seconds_to_date,
+    get_time_from_string,
+    get_string_from_time,
+    time_diff_seconds,
 )
 
 
-__version__ = "0.0.5"
+__version__ = "0.0.6"
