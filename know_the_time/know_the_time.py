@@ -5,9 +5,15 @@ from time import time, localtime
 
 # Accepted time/date formats (all functions rely on this list)
 TIME_FORMATS = [
+    # Time only
     "%H:%M",
     "%H:%M:%S",
     "%H:%M:%S:%f",
+    # Date only
+    "%d.%m.",
+    "%d.%m.%y",
+    "%d.%m.%Y",
+    # Date + time
     "%H:%M, %d.%m.",
     "%H:%M, %d.%m.%y",
     "%H:%M, %d.%m.%Y",
@@ -16,7 +22,7 @@ TIME_FORMATS = [
     "%H:%M:%S, %d.%m.%Y",
     "%H:%M:%S:%f, %d.%m.",
     "%H:%M:%S:%f, %d.%m.%y",
-    "%H:%M:%S:%f, %d.%m.%Y"
+    "%H:%M:%S:%f, %d.%m.%Y",
 ]
 
 
@@ -24,9 +30,10 @@ def get_time_from_string(t_str):
     """
     Parse a flexible time/date string into a datetime object.
 
-    Missing date values default to today's date.
-    Missing year values default to the current year.
-    See TIME_FORMATS for supported formats.
+    Missing values are filled in as:
+        - Missing year -> current year
+        - Missing day/month -> today
+        - Missing time -> 00:00:00
 
     Parameters
     ----------
@@ -44,17 +51,28 @@ def get_time_from_string(t_str):
         If the input string doesn't match any supported format.
     """
     t_str = t_str.strip()
+    now = datetime.now()
+
     for fmt in TIME_FORMATS:
         try:
             dt = datetime.strptime(t_str, fmt)
+
+            # Default year if missing
             if "%Y" not in fmt and "%y" not in fmt:
-                dt = dt.replace(year=datetime.now().year)
+                dt = dt.replace(year=now.year)
+
+            # Default day/month if missing
             if "%d" not in fmt:
-                now = datetime.now()
-                dt = dt.replace(year=now.year, month=now.month, day=now.day)
+                dt = dt.replace(day=now.day, month=now.month)
+
+            # Default time if missing
+            if "%H" not in fmt:
+                dt = dt.replace(hour=0, minute=0, second=0, microsecond=0)
+
             return dt
         except ValueError:
             continue
+
     raise ValueError(f"Time format not recognized: {t_str}")
 
 
@@ -523,7 +541,6 @@ def get_time_stamp2(
         + date_seperator
         + str(get_year(point_of_time))
     )
-
 
 
 def get_time_stamp_s(
