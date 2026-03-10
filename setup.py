@@ -1,6 +1,7 @@
-from setuptools import setup, find_packages
 import codecs
 import os
+
+from setuptools import find_packages, setup
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -14,7 +15,7 @@ DESCRIPTION = (
 # Setting up
 setup(
     name="know_the_time",
-    version="0.0.9",
+    version="0.0.10",
     author="André Herber",
     author_email="andre.herber.programming@gmail.com",
     # url="https://github.com/ICreedenI/know_the_time",

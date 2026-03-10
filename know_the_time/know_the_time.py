@@ -1,7 +1,6 @@
 from datetime import datetime
 from math import floor
-from time import time, localtime
-
+from time import localtime, time
 
 # Accepted time/date formats (all functions rely on this list)
 TIME_FORMATS = [
@@ -55,21 +54,26 @@ def get_time_from_string(t_str):
 
     for fmt in TIME_FORMATS:
         try:
-            dt = datetime.strptime(t_str, fmt)
+            parse_str = t_str
+            parse_fmt = fmt
 
-            # Default year if missing
-            if "%Y" not in fmt and "%y" not in fmt:
-                dt = dt.replace(year=now.year)
+            # If format has day+month but no year → inject current year
+            if "%d" in fmt and "%Y" not in fmt and "%y" not in fmt:
+                parse_str = f"{t_str}{now.year}"
+                parse_fmt = f"{fmt}%Y"
 
-            # Default day/month if missing
+            dt = datetime.strptime(parse_str, parse_fmt)
+
+            # Default date if missing completely
             if "%d" not in fmt:
-                dt = dt.replace(day=now.day, month=now.month)
+                dt = dt.replace(year=now.year, month=now.month, day=now.day)
 
             # Default time if missing
             if "%H" not in fmt:
                 dt = dt.replace(hour=0, minute=0, second=0, microsecond=0)
 
             return dt
+
         except ValueError:
             continue
 
